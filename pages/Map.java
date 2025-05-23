@@ -4,14 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class Map {
+    public static IntegerProperty time = new SimpleIntegerProperty(320);
+
     public static Scene getScene() {
         Pane root = new Pane();
         Image image = new Image("map.png", 1280, 960, false, false);
@@ -40,21 +46,32 @@ public class Map {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                int speed = 1;
+                if (pressedKeys.contains(KeyCode.SHIFT)) {
+                    speed = 2; // Increase speed when SHIFT is pressed
+                    time.set(time.get() + 1);
+                }
                 if (pressedKeys.contains(KeyCode.UP)) {
-                    alex.setLayoutY(alex.getLayoutY() - 5); // Move up
+                    alex.setLayoutY(alex.getLayoutY() - speed); // Move up
                 }
                 if (pressedKeys.contains(KeyCode.DOWN)) {
-                    alex.setLayoutY(alex.getLayoutY() + 5); // Move down
+                    alex.setLayoutY(alex.getLayoutY() + speed); // Move down
                 }
                 if (pressedKeys.contains(KeyCode.LEFT)) {
-                    alex.setLayoutX(alex.getLayoutX() - 5); // Move left
+                    alex.setLayoutX(alex.getLayoutX() - speed); // Move left
                 }
                 if (pressedKeys.contains(KeyCode.RIGHT)) {
-                    alex.setLayoutX(alex.getLayoutX() + 5); // Move right
+                    alex.setLayoutX(alex.getLayoutX() + speed); // Move right
                 }
             }
         };
         timer.start();
+
+        VBox hud = new VBox();
+        Label timeLabel = new Label();
+        timeLabel.textProperty().bind(new SimpleStringProperty("Time: ").concat(time.divide(60).asString()).concat(":").concat(time.subtract(time.divide(60).multiply(60)).asString("%02d")));
+        hud.getChildren().add(timeLabel);
+        root.getChildren().add(hud);
 
         return scene;
     }

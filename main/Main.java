@@ -13,7 +13,6 @@ public class Main extends Application {
         Main.stage = stage;
         stage.setScene(TitleScreen.getScene());
         stage.show();
-        System.out.println("Thaddussy");
     }
 
     public static void setScene(Scene scene) {
