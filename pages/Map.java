@@ -1,5 +1,6 @@
 package pages;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +15,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
+import main.Player;
 
 public class Map {
-    public static IntegerProperty time = new SimpleIntegerProperty(320);
+    public static Player player = new Player(new SimpleIntegerProperty(0));
 
     public static Scene getScene() {
         Pane root = new Pane();
@@ -42,14 +45,22 @@ public class Map {
         scene.setOnKeyPressed(event -> pressedKeys.add(event.getCode()));
         scene.setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
 
+        ArrayList<Rectangle> obstacles = new ArrayList<>();
+        obstacles.add(new Rectangle(610, 653, 28, 42));
+
         // AnimationTimer to handle movement
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 int speed = 1;
+                if (checkCollision(alex, obstacles)) {
+                    // If collision detected, reset position
+                    alex.setLayoutX(640);
+                    alex.setLayoutY(480);
+                }
                 if (pressedKeys.contains(KeyCode.SHIFT)) {
                     speed = 2; // Increase speed when SHIFT is pressed
-                    time.set(time.get() + 1);
+                    player.addTime(1);
                 }
                 if (pressedKeys.contains(KeyCode.UP)) {
                     alex.setLayoutY(alex.getLayoutY() - speed); // Move up
@@ -69,10 +80,20 @@ public class Map {
 
         VBox hud = new VBox();
         Label timeLabel = new Label();
+        SimpleIntegerProperty time = player.getTime();
         timeLabel.textProperty().bind(new SimpleStringProperty("Time: ").concat(time.divide(60).asString()).concat(":").concat(time.subtract(time.divide(60).multiply(60)).asString("%02d")));
         hud.getChildren().add(timeLabel);
         root.getChildren().add(hud);
 
         return scene;
+    }
+
+    private static boolean checkCollision(ImageView sprite, ArrayList<Rectangle> obstacles) {
+        for (Rectangle obstacle : obstacles) {
+            if (sprite.getBoundsInParent().intersects(obstacle.getBoundsInParent())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
