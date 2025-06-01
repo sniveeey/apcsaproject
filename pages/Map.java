@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.w3c.dom.css.Rect;
-
 import buildings.*;
 import javafx.animation.AnimationTimer;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -21,7 +19,7 @@ import main.Main;
 import main.Player;
 
 public class Map {
-    public static Player player = new Player(new SimpleIntegerProperty(0), new SimpleIntegerProperty(0), new SimpleDoubleProperty(50), new SimpleIntegerProperty(100));
+    public static Player player = new Player(new SimpleIntegerProperty(480), new SimpleIntegerProperty(0), new SimpleDoubleProperty(50), new SimpleIntegerProperty(100));
 
     public static Scene getScene(int x, int y) {
         Pane root = new Pane();
@@ -54,21 +52,32 @@ public class Map {
         Rectangle ticketbooth = new Rectangle(564, 836, 150, 40);
         Rectangle firstaid = new Rectangle(774, 660, 24, 140);
         Rectangle shop = new Rectangle(814, 480, 30, 80);
+        Rectangle arcade = new Rectangle(822, 236, 24, 30);
+        Rectangle lasertag = new Rectangle(1000, 796, 250, 16);
+        Rectangle carousel = new Rectangle(584, 338, 82, 20);
+        Rectangle droptower = new Rectangle(308, 348, 40, 18);
+        Rectangle batmantheride = new Rectangle(246, 434, 50, 30);
         //debugRect.setStyle("-fx-fill: rgba(255,0,0,0.3); -fx-stroke: red; -fx-stroke-width: 2;");
-        //root.getChildren().add(debugRect); // Add to root so it's visible
+        //root.getChildren().add(debugRect);
         obstacles.add(mcdonalds);
         obstacles.add(burgerking);
         obstacles.add(starbucks);
         obstacles.add(ticketbooth);
         obstacles.add(firstaid);
         obstacles.add(shop);
+        obstacles.add(arcade);
+        obstacles.add(lasertag);
+        obstacles.add(carousel);
+        obstacles.add(droptower);
+        obstacles.add(batmantheride);
 
-        // AnimationTimer to handle movement
-        AnimationTimer timer = new AnimationTimer() {
+        final AnimationTimer[] timer = new AnimationTimer[1];
+        timer[0] = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 int speed = 1;
                 if (checkCollision(alex, obstacles) != -1) {
+                    timer[0].stop();
                     switch (checkCollision(alex, obstacles)) {
                         case 0:
                             Main.setScene(new McDonalds().getScene());
@@ -88,27 +97,42 @@ public class Map {
                         case 5:
                             Main.setScene(new Shop().getScene());
                             break;
+                        case 6:
+                            Main.setScene(new Arcade().getScene());
+                            break;
+                        case 7:
+                            Main.setScene(new LaserTag().getScene());
+                            break;
+                        case 8:
+                            Main.setScene(new Carousel().getScene());
+                            break;
+                        case 9:
+                            Main.setScene(new DropTower().getScene());
+                            break;
+                        case 10:
+                            Main.setScene(new BatmanTheRide().getScene());
+                            break;
                     }
-                }
-                if (pressedKeys.contains(KeyCode.SHIFT)) {
-                    speed = 2; // Increase speed when SHIFT is pressed
-                    player.addTime(1);
-                }
-                if (pressedKeys.contains(KeyCode.UP)) {
-                    alex.setLayoutY(alex.getLayoutY() - speed); // Move up
-                }
-                if (pressedKeys.contains(KeyCode.DOWN)) {
-                    alex.setLayoutY(alex.getLayoutY() + speed); // Move down
-                }
-                if (pressedKeys.contains(KeyCode.LEFT)) {
-                    alex.setLayoutX(alex.getLayoutX() - speed); // Move left
-                }
-                if (pressedKeys.contains(KeyCode.RIGHT)) {
-                    alex.setLayoutX(alex.getLayoutX() + speed); // Move right
+                } else {
+                    if (pressedKeys.contains(KeyCode.SHIFT)) {
+                        speed = 2;
+                    }
+                    if (pressedKeys.contains(KeyCode.UP)) {
+                        alex.setLayoutY(alex.getLayoutY() - speed);
+                    }
+                    if (pressedKeys.contains(KeyCode.DOWN)) {
+                        alex.setLayoutY(alex.getLayoutY() + speed);
+                    }
+                    if (pressedKeys.contains(KeyCode.LEFT)) {
+                        alex.setLayoutX(alex.getLayoutX() - speed);
+                    }
+                    if (pressedKeys.contains(KeyCode.RIGHT)) {
+                        alex.setLayoutX(alex.getLayoutX() + speed);
+                    }
                 }
             }
         };
-        timer.start();
+        timer[0].start();
 
         root.getChildren().add(new Hud(player).getHud());
 

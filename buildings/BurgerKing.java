@@ -14,9 +14,9 @@ public class BurgerKing extends Restaurant {
     }
 
     public static ArrayList<Button> getMenuItems() {
-        Button whopper = new Button("Whopper\n$6.19", new ImageView(new Image("whopper.png", 64, 64, true, true)));
-        Button fries = new Button("Fries\n$3.29", new ImageView(new Image("bkfries.png", 64, 64, true, true)));
-        Button onionRings = new Button("Onion Rings\n$3.29", new ImageView(new Image("onionrings.png", 64, 64, true, true)));
+        Button whopper = new Button("Whopper\n$6.19\n20 hunger", new ImageView(new Image("whopper.png", 64, 64, true, true)));
+        Button fries = new Button("Fries\n$3.29\n10 hunger", new ImageView(new Image("bkfries.png", 64, 64, true, true)));
+        Button onionRings = new Button("Onion Rings\n$3.29\n10 hunger", new ImageView(new Image("onionrings.png", 64, 64, true, true)));
 
         ArrayList<Button> menuItems = new ArrayList<>();
         menuItems.add(whopper);
@@ -26,14 +26,17 @@ public class BurgerKing extends Restaurant {
         whopper.setPrefSize(200, 120);
         whopper.setOnAction(e -> {
             Map.player.addMoney(-6.19);
+            Map.player.addHunger(30);
         });
         fries.setPrefSize(200, 120);
         fries.setOnAction(e -> {
             Map.player.addMoney(-3.29);
+            Map.player.addHunger(10);
         });
         onionRings.setPrefSize(200, 120);
         onionRings.setOnAction(e -> {
             Map.player.addMoney(-3.29);
+            Map.player.addHunger(10);
         });
 
         return menuItems;

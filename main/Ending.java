@@ -7,11 +7,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 
-public class Loss {
+public class Ending {
 
     private String reason;
 
-    public Loss(String reason) {
+    public Ending(String reason) {
         this.reason = reason;
     }
 
@@ -34,17 +34,39 @@ public class Loss {
             Scene scene = new Scene(root, 640, 480);
             
             return scene;
-
-        } else {
+        } else if (reason.equals("tickets")) {
             StackPane root = new StackPane();
-            // put actual video here
-            MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass().getResource("/2024-12-07 17-01-20.mp4").toExternalForm()));
-            mediaPlayer.setAutoPlay(true);
-            MediaView mediaView = new MediaView(mediaPlayer);
-            root.getChildren().add(mediaView);
+            Label label = new Label("You ran out of tickets!");
+            label.setStyle("-fx-font-size: 24px; -fx-text-fill: red;");
+            root.getChildren().add(label);
             
             Scene scene = new Scene(root, 640, 480);
+            
+            return scene;
+        } else if (reason.equals("leave")) {
+            StackPane root = new StackPane();
+            Label label = new Label("You left the park!");
+            label.setStyle("-fx-font-size: 24px; -fx-text-fill: green;");
+            root.getChildren().add(label);
+            
+            Scene scene = new Scene(root, 640, 480);
+            
+            return scene;
+        } else {
+            StackPane root = new StackPane();
+            MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass().getResource("/timeloss.mp4").toExternalForm()));
+            mediaPlayer.setAutoPlay(true);
+            MediaView mediaView = new MediaView(mediaPlayer);
+            mediaView.setFitWidth(640);
+            mediaView.setFitHeight(480);
+            root.getChildren().add(mediaView);
 
+            // Close the window when the video ends
+            mediaPlayer.setOnEndOfMedia(() -> {
+                Main.getStage().close();
+            });
+
+            Scene scene = new Scene(root, 640, 480);
             return scene;
         }
     }

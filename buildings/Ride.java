@@ -12,17 +12,17 @@ import main.Hud;
 import main.Main;
 import pages.Map;
 
-public class Experience {
+public class Ride {
     private String name;
-    private double cost;
+    private int tickets;
     private int time;
     private String video;
     private int x;
     private int y;
 
-    public Experience(String name, double cost, int time, String video, int x, int y) {
+    public Ride(String name, int tickets, int time, String video, int x, int y) {
         this.name = name;
-        this.cost = cost;
+        this.tickets = tickets;
         this.time = time;
         this.video = video;
         this.x = x;
@@ -35,14 +35,14 @@ public class Experience {
         VBox vbox = new VBox();
         vbox.setSpacing(20);
         vbox.setAlignment(javafx.geometry.Pos.CENTER);
-        Button experience = new Button(name + "\n$" + String.format("%.2f", cost) + "\n" + time + " minutes");
+        Button experience = new Button(name + "\n" + tickets + " tickets\n" + time + " minutes");
         MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass().getResource(video).toExternalForm()));
         MediaView mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(640);
         mediaView.setFitHeight(480);
         experience.setOnAction(e -> {
             Map.player.addTime(time);
-            Map.player.addMoney(-cost);
+            Map.player.addTickets(-tickets);
             root.getChildren().add(mediaView);
             mediaPlayer.play();
             mediaPlayer.setOnEndOfMedia(() -> {

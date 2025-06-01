@@ -23,10 +23,10 @@ public class Player {
 
     public void addTime(int amount) {
         time.set(time.get() + amount);
-        if (time.get() >= 1440) {
-            Main.setScene(new Loss("time").getScene());
+        if (time.get() >= 1200) {
+            Main.setScene(new Ending("time").getScene());
         }
-        addHunger(amount / 10);
+        addHunger(-amount / 4);
     }
 
     public SimpleIntegerProperty getTime() {
@@ -39,6 +39,9 @@ public class Player {
 
     public void addTickets(int amount) {
         tickets.set(tickets.get() + amount);
+        if (tickets.get() < 0) {
+            Main.setScene(new Ending("tickets").getScene());
+        }
     }
 
     public SimpleIntegerProperty getTickets() {
@@ -52,7 +55,7 @@ public class Player {
     public void addMoney(double amount) {
         money.set(money.get() + amount);
         if (money.get() < 0) {
-            Main.setScene(new Loss("money").getScene());
+            Main.setScene(new Ending("money").getScene());
         }
     }
 
@@ -67,7 +70,7 @@ public class Player {
     public void addHunger(int amount) {
         hunger.set(hunger.get() + amount);
         if (hunger.get() <= 0) {
-            Main.setScene(new Loss("hunger").getScene());
+            Main.setScene(new Ending("hunger").getScene());
         }
     }
 

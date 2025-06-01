@@ -6,6 +6,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import main.Hud;
 import main.Main;
 import pages.Map;
@@ -22,9 +25,23 @@ public class Shop {
         items.setSpacing(10);
         items.setAlignment(javafx.geometry.Pos.CENTER);
         Button leave = new Button("Leave");
+
+        // Add media for leaving
+        MediaPlayer mediaPlayer = new MediaPlayer(new Media(getClass().getResource("/leaveshop.mp4").toExternalForm()));
+        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView.setFitWidth(640);
+        mediaView.setFitHeight(480);
+
         leave.setOnAction(e -> {
-            Main.setScene(Map.getScene(780, 460));
+            root.getChildren().add(mediaView);
+            mediaPlayer.play();
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.stop();
+                root.getChildren().remove(mediaView);
+                Main.setScene(Map.getScene(780, 460));
+            });
         });
+
         vbox.getChildren().addAll(label, items, leave);
 
         VBox tshirtBox = new VBox();
