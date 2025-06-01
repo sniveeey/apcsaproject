@@ -4,24 +4,26 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.w3c.dom.css.Rect;
+
+import buildings.*;
 import javafx.animation.AnimationTimer;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import main.Hud;
+import main.Main;
 import main.Player;
 
 public class Map {
-    public static Player player = new Player(new SimpleIntegerProperty(0));
+    public static Player player = new Player(new SimpleIntegerProperty(0), new SimpleIntegerProperty(0), new SimpleDoubleProperty(50), new SimpleIntegerProperty(100));
 
-    public static Scene getScene() {
+    public static Scene getScene(int x, int y) {
         Pane root = new Pane();
         Image image = new Image("map.png", 1280, 960, false, false);
         ImageView imageView = new ImageView(image);
@@ -32,8 +34,8 @@ public class Map {
         ImageView alex = new ImageView(new Image("alex.png", 12, 20, false, false));
         alex.setFitWidth(12);
         alex.setFitHeight(20);
-        alex.setLayoutX(640); // Start at the center of the screen
-        alex.setLayoutY(480);
+        alex.setLayoutX(x);
+        alex.setLayoutY(y);
         root.getChildren().add(alex);
 
         Scene scene = new Scene(root, 1280, 960);
@@ -46,17 +48,47 @@ public class Map {
         scene.setOnKeyReleased(event -> pressedKeys.remove(event.getCode()));
 
         ArrayList<Rectangle> obstacles = new ArrayList<>();
-        obstacles.add(new Rectangle(610, 653, 28, 42));
+        Rectangle mcdonalds = new Rectangle(616, 634, 28, 42);
+        Rectangle burgerking = new Rectangle(1072, 572, 16, 24);
+        Rectangle starbucks = new Rectangle(1116, 704, 20, 40);
+        Rectangle ticketbooth = new Rectangle(564, 836, 150, 40);
+        Rectangle firstaid = new Rectangle(774, 660, 24, 140);
+        Rectangle shop = new Rectangle(814, 480, 30, 80);
+        //debugRect.setStyle("-fx-fill: rgba(255,0,0,0.3); -fx-stroke: red; -fx-stroke-width: 2;");
+        //root.getChildren().add(debugRect); // Add to root so it's visible
+        obstacles.add(mcdonalds);
+        obstacles.add(burgerking);
+        obstacles.add(starbucks);
+        obstacles.add(ticketbooth);
+        obstacles.add(firstaid);
+        obstacles.add(shop);
 
         // AnimationTimer to handle movement
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 int speed = 1;
-                if (checkCollision(alex, obstacles)) {
-                    // If collision detected, reset position
-                    alex.setLayoutX(640);
-                    alex.setLayoutY(480);
+                if (checkCollision(alex, obstacles) != -1) {
+                    switch (checkCollision(alex, obstacles)) {
+                        case 0:
+                            Main.setScene(new McDonalds().getScene());
+                            break;
+                        case 1:
+                            Main.setScene(new BurgerKing().getScene());
+                            break;
+                        case 2:
+                            Main.setScene(new Starbucks().getScene());
+                            break;
+                        case 3:
+                            Main.setScene(new TicketBooth().getScene());
+                            break;
+                        case 4:
+                            Main.setScene(new FirstAid().getScene());
+                            break;
+                        case 5:
+                            Main.setScene(new Shop().getScene());
+                            break;
+                    }
                 }
                 if (pressedKeys.contains(KeyCode.SHIFT)) {
                     speed = 2; // Increase speed when SHIFT is pressed
@@ -78,22 +110,17 @@ public class Map {
         };
         timer.start();
 
-        VBox hud = new VBox();
-        Label timeLabel = new Label();
-        SimpleIntegerProperty time = player.getTime();
-        timeLabel.textProperty().bind(new SimpleStringProperty("Time: ").concat(time.divide(60).asString()).concat(":").concat(time.subtract(time.divide(60).multiply(60)).asString("%02d")));
-        hud.getChildren().add(timeLabel);
-        root.getChildren().add(hud);
+        root.getChildren().add(new Hud(player).getHud());
 
         return scene;
     }
 
-    private static boolean checkCollision(ImageView sprite, ArrayList<Rectangle> obstacles) {
-        for (Rectangle obstacle : obstacles) {
-            if (sprite.getBoundsInParent().intersects(obstacle.getBoundsInParent())) {
-                return true;
+    private static int checkCollision(ImageView sprite, ArrayList<Rectangle> obstacles) {
+        for (int i = 0; i < obstacles.size(); i++) {
+            if (sprite.getBoundsInParent().intersects(obstacles.get(i).getBoundsInParent())) {
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 }

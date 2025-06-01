@@ -12,7 +12,7 @@ public class TitleScreen {
         Label l = new Label("Theme Park Project");
         Button b = new Button("Start Game");
         b.setOnAction(e -> {
-            Main.setScene(Map.getScene());
+            Main.setScene(Map.getScene(640, 800));
         });
         root.setAlignment(javafx.geometry.Pos.CENTER);
         root.getChildren().addAll(l, b);
