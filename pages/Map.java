@@ -19,7 +19,7 @@ import main.Main;
 import main.Player;
 
 public class Map {
-    public static Player player = new Player(new SimpleIntegerProperty(480), new SimpleIntegerProperty(0), new SimpleDoubleProperty(50), new SimpleIntegerProperty(100));
+    public static Player player = new Player(new SimpleIntegerProperty(480), new SimpleIntegerProperty(0), new SimpleDoubleProperty(100), new SimpleIntegerProperty(100));
 
     public static Scene getScene(int x, int y) {
         Pane root = new Pane();
